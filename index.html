@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn tập Giữa HKI - Tin học 12 (Premium Edition)</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-dark: #1a237e;
+            --accent-gold: #d4af37;
+            --text-main: #2c3e50;
+            --text-muted: #546e7a;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            --bg-base-blue: #e0eafc;
+            --bg-base-orange: #fcece0;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, var(--bg-base-blue), var(--bg-base-orange));
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--text-main);
+            transition: background 1s ease-in-out;
+            overflow-x: hidden;
+        }
+
+        .watermark {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: -1;
+            display: flex; flex-wrap: wrap; justify-content: space-around; align-content: space-around;
+            opacity: 0.04; font-family: 'Great Vibes', cursive; font-size: 4rem; color: #000;
+            transform: rotate(-25deg) scale(1.2); overflow: hidden;
+        }
+
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 30px; background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border); box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            position: relative; z-index: 10;
+        }
+
+        .header-left {
+            font-family: 'Playfair Display', serif; font-weight: 700; color: var(--primary-dark);
+            font-size: 1.2rem; letter-spacing: 1px; text-transform: uppercase;
+        }
+
+        .header-center {
+            font-family: 'Playfair Display', serif; font-weight: 600; font-size: 1.4rem;
+            color: #b71c1c; text-align: center; flex-grow: 1; text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+        }
+
+        .header-right {
+            font-family: 'Great Vibes', cursive; font-size: 2.2rem; color: var(--accent-gold);
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+        }
+
+        .play-count-badge {
+            background: linear-gradient(135deg, #d4af37, #aa7c11); color: white;
+            padding: 6px 20px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;
+            letter-spacing: 1px; box-shadow: 0 4px 10px rgba(212, 175, 55, 0.4);
+            border: 1px solid rgba(255,255,255,0.3); white-space: nowrap;
+        }
+
+        .container {
+            max-width: 850px; margin: 40px auto 30px; width: 92%;
+            position: relative; z-index: 10; flex-grow: 1;
+        }
+
+        .card {
+            background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-radius: 24px; border: 1px solid var(--glass-border); padding: 40px;
+            box-shadow: var(--glass-shadow); position: relative; overflow: hidden;
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card::before {
+            content: ''; position: absolute; top: 15px; left: 15px; right: 15px; bottom: 15px;
+            border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 16px; pointer-events: none;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #login-screen { text-align: center; }
+        #login-screen h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--primary-dark); margin-bottom: 5px; }
+        #login-screen p { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 20px; letter-spacing: 2px; text-transform: uppercase; }
+        
+        .login-play-count {
+            display: inline-block; background: rgba(212, 175, 55, 0.15); color: #aa7c11;
+            padding: 8px 25px; border-radius: 50px; font-weight: 700; margin-bottom: 25px; border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .input-group { margin: 20px 0; text-align: left; position: relative; }
+        .input-group label { display: block; margin-bottom: 10px; font-weight: 600; color: var(--text-main); font-size: 0.95rem; }
+        .input-group input {
+            width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; font-size: 1rem; font-family: 'Montserrat', sans-serif;
+            box-sizing: border-box; outline: none; transition: all 0.3s;
+        }
+        .input-group input:focus { border-color: var(--accent-gold); box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15); }
+        #login-error { color: #d32f2f; font-weight: 600; font-size: 0.9rem; margin-top: 15px; display: none; }
+
+        .btn {
+            padding: 15px 35px; font-size: 1.1rem; font-weight: 600; font-family: 'Montserrat', sans-serif;
+            border: none; border-radius: 50px; cursor: pointer; transition: all 0.4s ease;
+            color: white; letter-spacing: 1px; text-transform: uppercase; position: relative; overflow: hidden;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #1a237e, #3949ab); width: 100%; margin-top: 15px; box-shadow: 0 8px 20px rgba(26, 35, 126, 0.3);
+        }
+        .btn-start:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(26, 35, 126, 0.4); }
+
+        .stats-bar {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;
+            font-weight: 600; background: rgba(255,255,255,0.6); padding: 12px 20px;
+            border-radius: 12px; border: 1px solid var(--glass-border); font-size: 0.95rem;
+        }
+        .stat-item { display: flex; align-items: center; gap: 5px; }
+        .stat-correct { color: #2e7d32; }
+        .stat-wrong { color: #c62828; }
+        .stat-badge { background: white; padding: 2px 8px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+        .question-text {
+            font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 600;
+            margin-bottom: 25px; line-height: 1.6; color: var(--primary-dark);
+        }
+        .question-badge {
+            display: inline-block; background: var(--primary-dark); color: white;
+            padding: 4px 12px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 15px; font-family: 'Montserrat', sans-serif;
+        }
+
+        .options-grid { display: flex; flex-direction: column; gap: 15px; }
+        .option {
+            background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(0,0,0,0.05); border-radius: 12px;
+            padding: 18px 20px; font-size: 1.05rem; cursor: pointer; transition: all 0.3s; color: var(--text-main);
+        }
+        .option:hover:not(.disabled) {
+            background: #fff; border-color: var(--accent-gold); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(212, 175, 55, 0.1);
+        }
+        .option.correct { background: #e8f5e9 !important; border-color: #4caf50 !important; color: #1b5e20; font-weight: 500; }
+        .option.wrong { background: #ffebee !important; border-color: #f44336 !important; color: #b71c1c; }
+        .option.disabled { cursor: not-allowed; opacity: 0.8; }
+
+        .bottom-actions { display: flex; margin-top: 25px; gap: 15px; align-items: stretch; min-height: 55px; }
+        
+        .explanation-box {
+            flex-grow: 1; background: linear-gradient(135deg, #fff3e0, #ffe0b2); border: 1px solid rgba(255, 152, 0, 0.3);
+            border-radius: 12px; padding: 12px 20px; display: none; text-align: left;
+            animation: fadeInUp 0.4s; box-shadow: 0 4px 10px rgba(255, 152, 0, 0.1);
+            flex-direction: column; justify-content: center;
+        }
+        .expl-title { font-size: 0.75rem; font-weight: 700; color: #e65100; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 1px; }
+        .expl-text { font-size: 0.95rem; color: #424242; line-height: 1.5; font-weight: 500; }
+
+        .btn-next {
+            background: #b0bec5; cursor: not-allowed; display: flex; align-items: center; justify-content: center;
+            width: auto; white-space: nowrap; padding: 0 35px; opacity: 0.7; margin: 0; height: auto;
+        }
+        .btn-next.active {
+            background: linear-gradient(135deg, var(--accent-gold), #b8962e); cursor: pointer; opacity: 1;
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4); animation: pulse-gold 2s infinite;
+        }
+
+        .tf-container { display: flex; flex-direction: column; gap: 15px; }
+        .tf-row {
+            background: rgba(255,255,255,0.85); border: 1px solid rgba(0,0,0,0.08); border-radius: 12px;
+            padding: 18px 20px; transition: all 0.3s;
+        }
+        .tf-row:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .tf-statement { font-size: 1.05rem; font-weight: 500; color: var(--text-main); margin-bottom: 12px; line-height: 1.5; }
+        .tf-actions { display: flex; gap: 10px; }
+        
+        .tf-btn {
+            flex: 1; padding: 12px; border-radius: 8px; border: 2px solid #e0e0e0; background: #fff;
+            font-weight: 700; color: #757575; cursor: pointer; transition: all 0.2s; font-family: 'Montserrat', sans-serif;
+        }
+        .tf-btn:hover:not(.disabled) { border-color: var(--primary-dark); color: var(--primary-dark); background: #f0f4ff; }
+        .tf-btn.selected-correct { background: #e8f5e9; border-color: #4caf50; color: #1b5e20; }
+        .tf-btn.selected-wrong { background: #ffebee; border-color: #f44336; color: #b71c1c; }
+        .tf-btn.disabled { pointer-events: none; }
+        
+        .tf-expl-inline {
+            margin-top: 12px; font-size: 0.9rem; color: #c62828; background: #fff0f2;
+            padding: 10px 15px; border-radius: 8px; border-left: 4px solid #f44336; display: none; font-weight: 500;
+        }
+
+        #result-screen h2 { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--primary-dark); }
+        #final-score {
+            font-size: 4rem; font-weight: 700; background: linear-gradient(135deg, var(--accent-gold), #8c711a);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 10px 0 5px;
+        }
+        .max-score-text { font-size: 1.2rem; color: var(--text-muted); font-weight: 600; margin-bottom: 20px; }
+
+        .btn-restart { background: linear-gradient(135deg, #e65100, #ff9800); box-shadow: 0 8px 20px rgba(230, 81, 0, 0.3); margin-top: 20px; }
+        .btn-restart:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(230, 81, 0, 0.4); }
+
+        @media (max-width: 768px) {
+            .header { padding: 15px; }
+            .header-left, .header-right { display: none; } /* Giữ lại tên trường ở giữa trên mobile cho gọn */
+            .header-center { font-size: 1.2rem; }
+            .play-count-badge { position: relative; display: inline-block; margin-top: 10px; bottom: 0; right: 0; }
+            .header { flex-direction: column; }
+            
+            .card { padding: 25px 20px; }
+            .bottom-actions { flex-direction: column; gap: 15px; }
+            .btn-next { padding: 15px; width: 100%; }
+        }
+
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="watermark" id="watermark-container"></div>
+
+    <div class="header">
+        <div class="header-left">Tin học 12</div>
+        <div class="header-center">Trường THPT Long Hải - Phước Tỉnh</div>
+        <div class="header-right">GV. Nguyễn Tiên</div>
+        <div class="play-count-badge" id="global-play-count">Lượt làm: 0</div>
+    </div>
+
+    <div class="container">
+        <div class="card" id="login-screen">
+            <h2>Đề cương Giữa HKI</h2>
+            <p>Bài 1 & Bài 2</p>
+            <div class="login-play-count" id="login-play-count">Tổng số lượt làm bài: 0</div>
+            
+            <div class="input-group">
+                <label for="student-name">Họ và tên học sinh</label>
+                <input type="text" id="student-name" placeholder="Nhập họ và tên..." required>
+            </div>
+            <div class="input-group">
+                <label for="student-class">Lớp</label>
+                <input type="text" id="student-class" placeholder="Ví dụ: 12A1" required>
+            </div>
+            <div id="login-error">Vui lòng nhập đầy đủ Họ tên và Lớp để bắt đầu!</div>
+            <button class="btn btn-start" onclick="startQuiz()">Bắt đầu làm bài</button>
+        </div>
+
+        <div class="card" id="quiz-screen" style="display: none;">
+            <div class="stats-bar">
+                <span class="stat-item" style="color: var(--primary-dark);">Tiến độ: <span class="stat-badge" id="progress-text">1/26</span></span>
+                <span class="stat-item stat-correct">Đúng: <span class="stat-badge" id="correct-count">0</span></span>
+                <span class="stat-item stat-wrong">Sai: <span class="stat-badge" id="wrong-count">0</span></span>
+            </div>
+            
+            <div class="question-badge" id="question-type-badge">TRẮC NGHIỆM NHIỀU LỰA CHỌN</div>
+            <div class="question-text" id="question-text">Nội dung câu hỏi sẽ hiện ở đây</div>
+            
+            <!-- Container cho Trắc nghiệm thường -->
+            <div class="options-grid" id="options-grid"></div>
+            
+            <!-- Container cho Trắc nghiệm Đúng/Sai -->
+            <div class="tf-container" id="tf-container" style="display: none;"></div>
+            
+            <div class="bottom-actions" id="bottom-actions">
+                <div id="explanation-box" class="explanation-box">
+                    <div class="expl-title">GIẢI THÍCH</div>
+                    <div class="expl-text" id="expl-text">Nội dung giải thích.</div>
+                </div>
+                <button class="btn btn-next" id="btn-next" onclick="nextQuestion()">CÂU TIẾP THEO</button>
+            </div>
+        </div>
+
+        <div class="card" id="result-screen" style="display: none; text-align: center;">
+            <h2 id="result-title">Hoàn thành xuất sắc!</h2>
+            <div id="final-score">0</div>
+            <div class="max-score-text">/ 44 Điểm (20 câu Đơn + 24 ý Đúng/Sai)</div>
+            <p id="result-message" style="font-size: 1.15rem; margin-bottom: 30px; line-height: 1.5; font-weight: 500;"></p>
+            <button class="btn btn-restart" onclick="restartQuiz()">LÀM LẠI BÀI (ĐẢO CÂU)</button>
+        </div>
+    </div>
+
+    <script>
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx50-zDmCbg8FhTJzcQe-chc0uAS52Z4qmKcTguB4SFTlBd57ZlozY0wTBgF_ZPYkk/exec";
+
+        // Khởi tạo Watermark nghệ thuật
+        const wmContainer = document.getElementById('watermark-container');
+        for(let i=0; i<40; i++) {
+            let span = document.createElement('span');
+            span.innerText = 'GV. Nguyễn Tiên';
+            wmContainer.appendChild(span);
+        }
+
+        const premiumBackgrounds = [
+            "linear-gradient(135deg, #e0eafc, #cfdef3)", "linear-gradient(135deg, #fdfbfb, #ebedee)",
+            "linear-gradient(135deg, #fdfcfb, #e2d1c3)", "linear-gradient(135deg, #eef2f3, #8e9eab)",
+            "linear-gradient(135deg, #fff1eb, #ace0f9)"
+        ];
+
+        const questionBankMC = [
+            // Bài 1
+            { q: "Trợ lí ảo có chức năng nào sau đây?", options: ["Nhận dạng khuôn mặt", "Nhận dạng chữ viết tay", "Tìm kiếm thông tin bằng tiếng nói của người dùng", "Kiểm tra lỗi chính tả"], answer: 2, explanation: "Trợ lí ảo (Siri, Google Assistant...) nhận lệnh và tìm kiếm thông tin bằng tiếng nói của người dùng." },
+            { q: "Sự kiện nào đánh dấu sự khởi đầu của lịch sử trí tuệ nhân tạo?", options: ["Hội thảo Stanford vào năm 1955", "Sự phát triển của hệ thống MYCIN vào những năm 1970", "Hội thảo tại MIT vào năm 1960", "Hội thảo Dartmouth năm 1956"], answer: 3, explanation: "Hội thảo Dartmouth năm 1956 được công nhận là sự kiện khai sinh ra khái niệm Trí tuệ nhân tạo." },
+            { q: "Lĩnh vực nào nghiên cứu cách máy tính và con người giao tiếp với nhau?", options: ["Học máy", "AI tạo sinh", "Thị giác máy tính", "Xử lí ngôn ngữ tự nhiên"], answer: 3, explanation: "Xử lí ngôn ngữ tự nhiên (NLP) giúp máy tính hiểu và tương tác với con người bằng ngôn ngữ thường ngày." },
+            { q: "Trường hợp nào sau đây không được coi là một ứng dụng của Trí tuệ nhân tạo?", options: ["Hệ thống lọc nội dung video trên Youtube", "Rơ le ngắt nguồn điện ấm nước khi sôi", "Hệ thống lái xe tự động nhận diện vật cản", "Công cụ Google Dịch nhận dạng qua giọng nói"], answer: 1, explanation: "Rơ le ngắt điện ở ấm nước sôi chỉ là công tắc vật lý dự trên cảm biến nhiệt độ, không có tính tư duy." },
+            { q: "Trí tuệ nhân tạo (AI) là gì?", options: ["Khả năng của máy tính thực hiện các công việc trí tuệ của con người.", "Khả năng của máy tính thực hiện các công việc cơ học.", "Khả năng của máy tính xử lý dữ liệu nhanh hơn", "Khả năng của máy tính chơi trò chơi."], answer: 0, explanation: "AI (Artificial Intelligence) là khả năng của máy tính có thể thực hiện các công việc mang tính trí tuệ của con người." },
+            { q: "Công nghệ then chốt nào giúp các robot thế hệ mới nhận biết môi trường xung quanh như thị giác người?", options: ["Kĩ thuật thị giác máy tính và phân tích ảnh", "Mạch cảm ứng nhiệt độ và rơ le tự ngắt điện", "Thuật toán mã hóa đường truyền mạng cục bộ", "Giao thức truyền dữ liệu âm thanh qua cáp mạng"], answer: 0, explanation: "Thị giác máy tính giúp robot phân tích, nhận dạng hình ảnh và vật thể để 'nhìn' môi trường." },
+            { q: "AI yếu được thiết kế để làm gì?", options: ["Giải quyết các vấn đề phức tạp trong nhiều lĩnh vực khác nhau", "Ứng dụng vào các nhiệm vụ cụ thể", "Tương tác tự nhiên với con người mà không cần trợ giúp", "Thực hiện tất cả các nhiệm vụ mà không cần sự can thiệp của con người"], answer: 1, explanation: "AI yếu (Narrow AI) được thiết kế và huấn luyện đặc biệt chỉ để thực hiện một số nhiệm vụ chuyên biệt cụ thể." },
+            { q: "Khả năng nào sau đây không phải là đặc trưng của AI", options: ["Khả năng hiểu ngôn ngữ", "Khả năng diễn xuất", "Khả năng nhận thức", "Khả năng học"], answer: 1, explanation: "Các đặc trưng cốt lõi của AI bao gồm khả năng học, nhận thức, suy luận, hiểu ngôn ngữ... diễn xuất không phải đặc trưng của AI." },
+            { q: "MYCIN là hệ chuyên gia trong lĩnh vực nào?", options: ["Nghiên cứu khoa học", "Y tế", "Kinh doanh", "Giáo dục"], answer: 1, explanation: "MYCIN là một trong những hệ chuyên gia sơ khai và nổi tiếng nhất, dùng để chẩn đoán bệnh nhiễm khuẩn trong Y tế." },
+            { q: "Ví dụ nào sau đây không phải là ứng dụng của AI tạo sinh?", options: ["Máy tính bỏ túi", "Midjourney", "ChatGPT", "Mubert"], answer: 0, explanation: "Máy tính bỏ túi chỉ thực hiện các phép toán logic cố định. Midjourney (ảnh), ChatGPT (văn bản), Mubert (âm nhạc) đều là AI tạo sinh." },
+            // Bài 2
+            { q: "Lợi ích của AI trong giáo dục và đào tạo là gì?", options: ["Tăng chi phí giáo dục", "Cá nhân hoá học tập", "Giảm chất lượng giảng dạy", "Tăng áp lực cho học viên"], answer: 1, explanation: "AI phân tích dữ liệu học tập của học viên để đưa ra lộ trình, bài giảng cá nhân hoá phù hợp với từng người." },
+            { q: "Ứng dụng nào của AI giúp phát hiện các giao dịch tài chính bất thường?", options: ["Tạo ra sản phẩm mới", "Phân tích hành vi tài chính để phát hiện gian lận", "Quản lý quỹ đầu tư", "Điều hành ngân hàng"], answer: 1, explanation: "Bằng cách học máy phân tích hàng triệu giao dịch, AI nhanh chóng phát hiện mẫu hành vi bất thường cảnh báo gian lận." },
+            { q: "Trong giao thông vận tải, AI đóng vai trò quan trọng nhất trong công nghệ nào?", options: ["Thu phí cầu đường tự động bằng thẻ định danh", "Bán vé tàu xe trực tuyến qua cổng thanh toán", "Lắp đặt hệ thống đèn tín hiệu hẹn giờ cố định", "Định vị đường đi và điều khiển xe tự hành"], answer: 3, explanation: "AI phân tích dữ liệu từ nhiều cảm biến thời gian thực để hỗ trợ điều hướng và lái xe tự hành an toàn." },
+            { q: "Khái niệm “AIoT” được hiểu là sự kết hợp công nghệ giữa hai yếu tố nào?", options: ["Trí tuệ nhân tạo và hệ điều hành mã nguồn mở.", "Mạng Internet toàn cầu và điện toán đám mây.", "Học máy thông minh và mạng xã hội người dùng.", "Trí tuệ nhân tạo cùng mạng Internet vạn vật."], answer: 3, explanation: "AIoT (Artificial Intelligence of Things) là sự kết hợp giữa AI và IoT (Internet of Things - Internet vạn vật)." },
+            { q: "Mối lo ngại hàng đầu về bảo mật thông tin khi người dùng tương tác với AI là gì?", options: ["Nguy cơ rò rỉ và lạm dụng dữ liệu cá nhân nhạy cảm.", "Làm giảm đáng kể dung lượng bộ nhớ máy tính bàn.", "Tăng thời gian phản hồi của các máy chủ tìm kiếm.", "Gây hiện tượng nghẽn mạch trên đường truyền cáp."], answer: 0, explanation: "Hệ thống AI cần thu thập lượng dữ liệu khổng lồ, do đó nguy cơ lớn nhất là xâm phạm quyền riêng tư và rò rỉ dữ liệu cá nhân." },
+            { q: "Để đảm bảo an toàn khi ứng dụng AI, nguyên tắc quan trọng nhất cần tuân thủ là gì?", options: ["Giấu kín toàn bộ mã nguồn của các mô hình học máy.", "Chỉ sử dụng AI cho các mục đích giải trí gia đình.", "Không cho phép máy tính kết nối với mạng viễn thông.", "Xây dựng khuôn khổ pháp lý và quy chuẩn đạo đức rõ ràng."], answer: 3, explanation: "Cần có luật pháp và chuẩn mực đạo đức rõ ràng để kiểm soát và định hướng sự phát triển của AI phục vụ con người." },
+            { q: "Giải pháp nào cần thiết để giám sát và đảm bảo an toàn trong phát triển AI?", options: ["Tăng cường sự minh bạch", "Giảm thiểu chi phí phát triển", "Hạn chế nghiên cứu AI", "Tăng cường sự phát triển của công nghệ"], answer: 0, explanation: "Sự minh bạch trong thuật toán và cách thu thập dữ liệu giúp giám sát và đảm bảo an toàn cho AI." },
+            { q: "Trong y tế, ứng dụng nào sau đây thể hiện khả năng hỗ trợ của AI?", options: ["Lưu hồ sơ bệnh án dưới dạng tệp mà không phân tích nội dung.", "Phân tích ảnh y khoa để hỗ trợ bác sĩ phát hiện dấu hiệu bất thường.", "In phiếu khám theo thông tin người dùng nhập.", "Đánh số thứ tự khám theo thời điểm đăng kí."], answer: 1, explanation: "AI sử dụng thị giác máy tính để phân tích ảnh X-quang, MRI... hỗ trợ bác sĩ phát hiện ung thư, khối u nhanh chóng." },
+            { q: "Ứng dụng nổi bật của AI trong nông nghiệp công nghệ cao hiện nay là gì?", options: ["Cơ giới hóa hoàn toàn khâu thu hoạch nông sản.", "Xây dựng hệ thống kênh mương dẫn nước bê tông.", "Dự báo sâu bệnh và tối ưu hóa lượng nước tưới.", "Chiếu sáng nhân tạo liên tục trong nhà kính trồng rau."], answer: 2, explanation: "AI kết hợp AIoT thu thập dữ liệu đất, thời tiết để tối ưu hoá lượng nước và dự báo sâu bệnh cho cây trồng." },
+            { q: "Khả năng nào sau đây là điểm vượt trội nhất của ChatGPT so với công cụ tìm kiếm truyền thống?", options: ["Khả năng sao chép y nguyên thông tin trên mạng.", "Khả năng truy xuất dữ liệu từ các tệp văn bản.", "Khả năng tổng hợp và trả lời theo ngữ cảnh hội thoại.", "Khả năng lưu trữ hàng triệu trang web độc lập."], answer: 2, explanation: "ChatGPT là AI tạo sinh có thể hiểu ngữ cảnh, nhớ cuộc hội thoại để tạo ra câu trả lời tổng hợp tự nhiên như con người." }
+        ];
+
+        const questionBankTF = [
+            {
+                q: "Trí tuệ nhân tạo (AI) và một số lĩnh vực nghiên cứu phát triển AI",
+                statements: [
+                    { text: "a) Hệ chuyên gia MYCIN được sử dụng để dự báo thời tiết.", answer: false, expl: "Sai. MYCIN là hệ chuyên gia được sử dụng trong lĩnh vực Y tế (chẩn đoán bệnh)." },
+                    { text: "b) Khả năng học là khả năng cảm nhận và hiểu biết môi trường xung quanh.", answer: false, expl: "Sai. Cảm nhận môi trường xung quanh là định nghĩa của 'Khả năng nhận thức' (Thị giác, âm thanh)." },
+                    { text: "c) Thị giác máy tính là lĩnh vực nghiên cứu phương pháp thu nhận và phân tích nhận dạng hình ảnh.", answer: true, expl: "Đúng. Đây là định nghĩa chuẩn của Thị giác máy tính." },
+                    { text: "d) Xử lí ngôn ngữ tự nhiên là nghiên cứu các mô hình ngôn ngữ để máy tính và con người có thể giao tiếp với nhau.", answer: true, expl: "Đúng." }
+                ]
+            },
+            {
+                q: "Phát biểu sau là đúng hay sai khi nói về khái niệm và đặc trưng của AI",
+                statements: [
+                    { text: "a) AI là khả năng của máy tính thực hiện các công việc mang tính trí tuệ của con người.", answer: true, expl: "Đúng." },
+                    { text: "b) Mục đích của AI là xây dựng các phần mềm giúp máy tính có năng lực trí tuệ tương tự con người.", answer: true, expl: "Đúng." },
+                    { text: "c) Khả năng học của AI cho phép máy tính ra quyết định dựa trên dữ liệu mới.", answer: true, expl: "Đúng. Khả năng học máy (Machine Learning) giúp AI cải thiện qua dữ liệu." },
+                    { text: "d) Khả năng nhận thức của AI là khả năng xử lí ngôn ngữ tự nhiên.", answer: false, expl: "Sai. Khả năng nhận thức liên quan đến cảm nhận vật lý (nhìn, nghe), khác với việc xử lý cú pháp, ý nghĩa ngôn ngữ." }
+                ]
+            },
+            {
+                q: "Các loại và ứng dụng của AI",
+                statements: [
+                    { text: "a) Trợ lí ảo có thể hỗ trợ tìm kiếm thông tin, mở các ứng dụng bằng chính giọng nói của người dùng.", answer: true, expl: "Đúng." },
+                    { text: "b) Trí tuệ nhân tạo tổng quát là mục tiêu dài hạn, có khả năng tự học và thực hiện nhiều công việc giống con người.", answer: true, expl: "Đúng. AI tổng quát (AGI) là cấp độ AI thông minh ngang con người ở mọi lĩnh vực." },
+                    { text: "c) Robot Asimo của Honda là một ví dụ về ứng dụng AI trong điều khiển robot.", answer: true, expl: "Đúng." },
+                    { text: "d) AI chỉ có thể nhận dạng mà không xác định được danh tính dựa trên hình ảnh khuôn mặt.", answer: false, expl: "Sai. AI hiện đại hoàn toàn có thể xác định chính xác danh tính (ví dụ: công nghệ FaceID)." }
+                ]
+            },
+            {
+                q: "Các cảnh báo ứng dụng AI",
+                statements: [
+                    { text: "a) AI có thể dẫn đến áp lực thất nghiệp do tự động hóa nhiều công việc.", answer: true, expl: "Đúng. Tự động hóa thay thế con người trong nhiều công việc lặp đi lặp lại." },
+                    { text: "b) Việc ứng dụng AI luôn giúp bảo vệ tuyệt đối quyền riêng tư của con người.", answer: false, expl: "Sai. AI đòi hỏi lượng dữ liệu lớn, tiềm ẩn nguy cơ cao về rò rỉ quyền riêng tư." },
+                    { text: "c) AI có thể đe dọa an ninh hệ thống nếu bị tấn công xâm nhập hoặc thay đổi dữ liệu.", answer: true, expl: "Đúng." },
+                    { text: "d) Tạo thêm nhiều việc làm mới ổn định cho con người là một cảnh báo tích cực của AI.", answer: false, expl: "Sai. Tạo việc làm không phải là một 'cảnh báo', cảnh báo ở đây là sự xáo trộn lao động." }
+                ]
+            },
+            {
+                q: "Một số lĩnh vực phát triển nhờ ứng dụng AI",
+                statements: [
+                    { text: "a) AI giúp phát triển người máy thông minh.", answer: true, expl: "Đúng." },
+                    { text: "b) AI giúp phát triển điều khiển con người.", answer: false, expl: "Sai. AI giúp phát triển các hệ thống điều khiển máy móc/thiết bị tự động, không phải điều khiển con người." },
+                    { text: "c) AI giúp phát triển một số sản phẩm, tiện ích thông minh.", answer: true, expl: "Đúng." },
+                    { text: "d) AI giúp phát triển các dịch vụ.", answer: true, expl: "Đúng. Dịch vụ chăm sóc khách hàng, tư vấn..." }
+                ]
+            },
+            {
+                q: "Các cảnh báo về ứng dụng AI",
+                statements: [
+                    { text: "a) Việc thu thập dữ liệu quy mô lớn để huấn luyện các mô hình AI có thể dẫn đến vi phạm quyền riêng tư của cá nhân.", answer: true, expl: "Đúng." },
+                    { text: "b) Những lo ngại về AI chủ yếu đến từ bản thân AI.", answer: false, expl: "Sai. Các nguy cơ thực chất chủ yếu đến từ ý đồ và cách thức con người phát triển, sử dụng AI." },
+                    { text: "c) Việc AI thu thập lượng lớn dữ liệu riêng tư là cảnh báo liên quan đến an ninh hệ thống.", answer: false, expl: "Sai. Việc thu thập dữ liệu cá nhân là cảnh báo liên quan đến 'Quyền riêng tư', không phải 'An ninh hệ thống'." },
+                    { text: "d) Thuật ngữ “Deepfake” đề cập đến những hình ảnh, video, đoạn ghi âm, … giả mạo mà con người khó nhận biết là giả.", answer: true, expl: "Đúng." }
+                ]
+            }
+        ];
+
+        let currentQuestions = [];
+        let currentIdx = 0;
+        let scoreCount = 0; // Điểm thực tế (Max 44)
+        let wrongCountDisplay = 0; 
+        
+        let answeredMC = false;
+        let answeredTFCount = 0; // Đếm số ý đã trả lời trong 1 câu TF (Cần đạt 4 để qua câu)
+
+        let studentInfo = { name: '', class: '' };
+        let playCount = localStorage.getItem('gvTien_playCount_premium') || 0;
+        playCount = parseInt(playCount);
+        
+        document.getElementById('global-play-count').innerText = `Lượt làm: ${playCount}`;
+        document.getElementById('login-play-count').innerText = `Tổng số lượt làm bài của em: ${playCount}`;
+
+        // Âm thanh Web Audio API (Không dùng file ngoài)
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function playSound(type) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+            
+            if (type === 'correct') {
+                osc.type = 'sine'; osc.frequency.setValueAtTime(880, now); osc.frequency.exponentialRampToValueAtTime(1760, now + 0.1);
+                gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.start(now); osc.stop(now + 0.5);
+            } else {
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(300, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.2);
+                gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now); osc.stop(now + 0.3);
+            }
+        }
+
+        function shuffleArray(array) {
+            let shuffled = array.slice();
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function startQuiz() {
+            const nameIp = document.getElementById('student-name').value.trim();
+            const classIp = document.getElementById('student-class').value.trim();
+            const errEl = document.getElementById('login-error');
+            
+            if(!nameIp || !classIp) {
+                errEl.style.display = 'block';
+                return;
+            }
+            errEl.style.display = 'none';
+            studentInfo.name = nameIp; studentInfo.class = classIp;
+
+            initAudio(); 
+            playCount++;
+            localStorage.setItem('gvTien_playCount_premium', playCount);
+            
+            document.getElementById('global-play-count').innerText = `Lượt làm: ${playCount}`;
+            document.getElementById('login-play-count').innerText = `Tổng số lượt làm bài của em: ${playCount}`;
+
+            // Ghép mảng: 20 câu Đơn trước, 6 câu Đúng Sai sau. Có xáo trộn nội bộ từng mảng.
+            let shuffledMC = shuffleArray(questionBankMC).map(q => ({...q, type: 'mc'}));
+            let shuffledTF = shuffleArray(questionBankTF).map(q => ({...q, type: 'tf'}));
+            currentQuestions = [...shuffledMC, ...shuffledTF];
+            
+            currentIdx = 0; scoreCount = 0; wrongCountDisplay = 0;
+
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'none';
+            document.getElementById('quiz-screen').style.display = 'block';
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const qData = currentQuestions[currentIdx];
+            
+            document.body.style.background = premiumBackgrounds[Math.floor(Math.random() * premiumBackgrounds.length)];
+            document.getElementById('progress-text').innerText = `${currentIdx + 1}/26`;
+            document.getElementById('correct-count').innerText = scoreCount;
+            document.getElementById('wrong-count').innerText = wrongCountDisplay;
+            
+            const badge = document.getElementById('question-type-badge');
+            const qText = document.getElementById('question-text');
+            const explBox = document.getElementById('explanation-box');
+            const btnNext = document.getElementById('btn-next');
+            const mcGrid = document.getElementById('options-grid');
+            const tfContainer = document.getElementById('tf-container');
+            
+            explBox.style.display = 'none';
+            btnNext.classList.remove('active');
+            btnNext.disabled = true;
+
+            if (qData.type === 'mc') {
+                answeredMC = false;
+                badge.innerText = "PHẦN I: TRẮC NGHIỆM NHIỀU LỰA CHỌN";
+                badge.style.background = "#1a237e";
+                qText.innerText = `Câu ${currentIdx + 1}: ${qData.q}`;
+                
+                tfContainer.style.display = 'none';
+                mcGrid.style.display = 'flex';
+                mcGrid.innerHTML = '';
+
+                const prefixes = ['A', 'B', 'C', 'D'];
+                qData.options.forEach((opt, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'option';
+                    div.innerHTML = `<strong style="color: var(--accent-gold); margin-right: 8px;">${prefixes[index]}.</strong> ${opt}`;
+                    div.onclick = () => checkAnswerMC(index, div, qData);
+                    mcGrid.appendChild(div);
+                });
+            } else {
+                answeredTFCount = 0;
+                badge.innerText = "PHẦN II: TRẮC NGHIỆM ĐÚNG/SAI";
+                badge.style.background = "#b71c1c";
+                qText.innerText = `Câu ${currentIdx + 1}: ${qData.q}`;
+                
+                mcGrid.style.display = 'none';
+                tfContainer.style.display = 'flex';
+                tfContainer.innerHTML = '';
+                
+                qData.statements.forEach((stmt, index) => {
+                    const row = document.createElement('div');
+                    row.className = 'tf-row';
+                    row.innerHTML = `
+                        <div class="tf-statement">${stmt.text}</div>
+                        <div class="tf-actions">
+                            <button class="tf-btn btn-true" onclick="checkAnswerTF(${index}, true, this.parentElement)">ĐÚNG</button>
+                            <button class="tf-btn btn-false" onclick="checkAnswerTF(${index}, false, this.parentElement)">SAI</button>
+                        </div>
+                        <div class="tf-expl-inline" id="tf-expl-${index}"></div>
+                    `;
+                    tfContainer.appendChild(row);
+                });
+            }
+        }
+
+        function checkAnswerMC(selectedIndex, optElement, qData) {
+            if (answeredMC) return;
+            answeredMC = true;
+
+            const options = document.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.add('disabled'));
+
+            if (selectedIndex === qData.answer) {
+                optElement.classList.add('correct');
+                playSound('correct');
+                scoreCount++;
+            } else {
+                optElement.classList.add('wrong');
+                options[qData.answer].classList.add('correct'); 
+                playSound('wrong');
+                wrongCountDisplay++;
+                
+                document.getElementById('expl-text').innerText = qData.explanation;
+                document.getElementById('explanation-box').style.display = 'flex';
+            }
+
+            document.getElementById('correct-count').innerText = scoreCount;
+            document.getElementById('wrong-count').innerText = wrongCountDisplay;
+
+            const nextBtn = document.getElementById('btn-next');
+            nextBtn.classList.add('active'); nextBtn.disabled = false;
+        }
+
+        function checkAnswerTF(stmtIndex, userChoice, actionsContainer) {
+            const btns = actionsContainer.querySelectorAll('.tf-btn');
+            if (btns[0].classList.contains('disabled')) return; // Đã trả lời dòng này
+            
+            const qData = currentQuestions[currentIdx];
+            const stmt = qData.statements[stmtIndex];
+            const explDiv = document.getElementById(`tf-expl-${stmtIndex}`);
+            
+            // Khóa các nút ở dòng này
+            btns.forEach(b => b.classList.add('disabled'));
+            
+            const clickedBtn = userChoice ? btns[0] : btns[1];
+            
+            if (userChoice === stmt.answer) {
+                clickedBtn.classList.add('selected-correct');
+                playSound('correct');
+                scoreCount++;
+            } else {
+                clickedBtn.classList.add('selected-wrong');
+                playSound('wrong');
+                wrongCountDisplay++;
+                explDiv.innerText = "✨ Giải thích: " + stmt.expl;
+                explDiv.style.display = 'block';
+            }
+            
+            document.getElementById('correct-count').innerText = scoreCount;
+            document.getElementById('wrong-count').innerText = wrongCountDisplay;
+            
+            answeredTFCount++;
+            if (answeredTFCount === 4) {
+                const nextBtn = document.getElementById('btn-next');
+                nextBtn.classList.add('active'); nextBtn.disabled = false;
+            }
+        }
+
+        function nextQuestion() {
+            const btnNext = document.getElementById('btn-next');
+            if (btnNext.disabled) return;
+            
+            currentIdx++;
+            if (currentIdx < currentQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'block';
+            document.body.style.background = "linear-gradient(135deg, var(--bg-base-blue), var(--bg-base-orange))";
+
+            document.getElementById('final-score').innerText = scoreCount;
+            
+            const msgEl = document.getElementById('result-message');
+            const percent = scoreCount / 44;
+
+            if (percent === 1) {
+                msgEl.innerText = "Hoàn hảo tuyệt đối! Em đã làm chủ toàn bộ kiến thức bài 1 và 2. Cô Tiên rất tự hào về em!";
+                msgEl.style.color = "#1b5e20";
+            } else if (percent >= 0.8) {
+                msgEl.innerText = "Thành tích rất ấn tượng! Em nắm bài rất vững, chỉ cần cẩn thận một chút ở vài ý nhỏ nhé.";
+                msgEl.style.color = "#0d47a1";
+            } else if (percent >= 0.5) {
+                msgEl.innerText = "Đạt mức Khá. Hãy xem lại những ý sai đã được giải thích để khắc sâu kiến thức hơn nhé.";
+                msgEl.style.color = "#e65100";
+            } else {
+                msgEl.innerText = "Kết quả chưa cao. Đừng nản chí! Em hãy ôn lại đề cương và làm lại bài để cải thiện điểm số.";
+                msgEl.style.color = "#b71c1c";
+            }
+
+            sendDataToSheets(studentInfo.name, studentInfo.class, scoreCount, 44, playCount);
+        }
+
+        function restartQuiz() {
+            document.getElementById('result-screen').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'block';
+            document.getElementById('student-name').value = studentInfo.name;
+            document.getElementById('student-class').value = studentInfo.class;
+        }
+
+        function sendDataToSheets(name, className, points, total, attempt) {
+            if (GOOGLE_SCRIPT_URL === "YOUR_WEB_APP_URL_HERE") return; 
+            const url = `${GOOGLE_SCRIPT_URL}?name=${encodeURIComponent(name)}&class=${encodeURIComponent(className)}&score=${points}&total=${total}&playCount=${attempt}`;
+            fetch(url, { mode: 'no-cors' })
+                .then(() => console.log("Data synced securely."))
+                .catch(err => console.error("Sync error: ", err));
+        }
+    </script>
+</body>
+</html>
